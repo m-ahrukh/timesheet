@@ -3,14 +3,12 @@ package com.mahrukh.timesheet.services;
 import com.mahrukh.timesheet.dtos.EmployeeDTO;
 import com.mahrukh.timesheet.dtos.EmployeeRequest;
 import com.mahrukh.timesheet.entities.Employee;
-import com.mahrukh.timesheet.mappers.EmployeeMapper;
 import com.mahrukh.timesheet.repositories.EmployeeRepository;
 import lombok.AllArgsConstructor;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,20 +17,22 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    //private final EmployeeMapper employeeMapper;
-
+    private final ModelMapper modelMapper;
     public EmployeeDTO saveEmployee(EmployeeRequest request){
 
 
-        Employee employee = EmployeeMapper.INSTANCE.employeeRequestToEmployee(request);
+        Employee employee = modelMapper.map(request, Employee.class);
         employeeRepository.save(employee);
 
-        EmployeeDTO dto = EmployeeMapper.INSTANCE.employeeToEmployeeDTO(employee);
-
-        return dto;
+        return modelMapper.map(employee, EmployeeDTO.class);
     }
 
     public List<EmployeeDTO> getAllEmployees() {
-        return null;
+        List<Employee> employees = employeeRepository.findAll();
+        List<EmployeeDTO> employeeDTOS = new ArrayList<>();
+        for (Employee employee: employees) {
+            employeeDTOS.add(modelMapper.map(employee, EmployeeDTO.class));
+        }
+        return employeeDTOS;
     }
 }

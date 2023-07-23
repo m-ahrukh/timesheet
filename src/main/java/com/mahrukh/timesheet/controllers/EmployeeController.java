@@ -19,7 +19,6 @@ public class EmployeeController {
 
     @PostMapping
     public EmployeeDTO saveEmployee(@RequestBody @Valid EmployeeRequest employee){
-        System.out.println("Employee is "+ employee);
         return employeeService.saveEmployee(employee);
     }
 
