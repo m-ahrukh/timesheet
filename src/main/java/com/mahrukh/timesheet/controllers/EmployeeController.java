@@ -5,7 +5,6 @@ import com.mahrukh.timesheet.dtos.EmployeeRequest;
 import com.mahrukh.timesheet.services.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +26,28 @@ public class EmployeeController {
         return employeeService.getAllEmployees();
     }
 
+    @GetMapping("/{username}")
+    public EmployeeDTO getEmployeeByUsername(@PathVariable @Valid String username){
+        return employeeService.getEmployeeByUsername(username);
+    }
 
+    @GetMapping("/id/{id}")
+    public EmployeeDTO getEmployeeById(@PathVariable @Valid Long id){
+        return employeeService.getEmployeeById(id);
+    }
 
+    @DeleteMapping("/{username}")
+    public EmployeeDTO deleteEmployee(@PathVariable @Valid String username){
+        return employeeService.deleteEmployee(username);
+    }
+
+    @DeleteMapping("/id/{id}")
+    public EmployeeDTO deleteEmployeeById(@PathVariable @Valid Long id){
+        return employeeService.deleteEmployeeById(id);
+    }
+
+    @PatchMapping("/id/{id}")
+    public EmployeeRequest updateEmployee(@RequestBody EmployeeRequest request, @PathVariable Long id){
+        return employeeService.updateEmployee(request, id);
+    }
 }
