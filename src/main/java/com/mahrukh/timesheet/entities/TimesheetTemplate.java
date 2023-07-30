@@ -7,26 +7,23 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.time.LocalTime;
 
-@Data
 @Entity
-public class Employee {
+@Data
+public class TimesheetTemplate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstName;
-    private String lastName;
-    private String username;
-    private String password;
+    private String templateDay;
 
     @CreationTimestamp(source = SourceType.DB)
-    private Instant createdOn;
-
-    @UpdateTimestamp(source = SourceType.DB)
-    private Instant lastUpdatedOn;
-
+    private Instant currentDate;
+    private LocalTime checkIn;
+    private LocalTime checkOut;
+    private LocalTime lunchBreakStart;
+    private LocalTime lunchBreakEnd;
 }

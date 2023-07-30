@@ -13,6 +13,7 @@ public class EmployeeRequest {
 
     @NotEmpty
     private String username;
+    @NotEmpty
     private String password;
 
 }
