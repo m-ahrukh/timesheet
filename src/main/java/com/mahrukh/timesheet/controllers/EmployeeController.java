@@ -60,7 +60,12 @@ public class EmployeeController {
     }
 
     @GetMapping("/{employeeId}/templates")
-    public List<TimesheetTemplateDTO> getTemplates(){
-        return employeeService.getTemplates();
+    public List<TimesheetTemplateDTO> getTemplates(@PathVariable Long employeeId){
+        return employeeService.getTemplates(employeeId);
+    }
+
+    @GetMapping("/{employeeId}/templates/{templateDay}")
+    public TimesheetTemplateDTO getTemplateByDay(@PathVariable Long employeeId, @PathVariable String templateDay){
+        return employeeService.getTemplateByDay(employeeId, templateDay);
     }
 }

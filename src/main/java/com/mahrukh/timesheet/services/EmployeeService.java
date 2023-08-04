@@ -111,27 +111,52 @@ public class EmployeeService {
     public TimesheetTemplateDTO saveTimesheetTemplate(TimesheetTemplateRequest request, Long employeeId) {
         Optional<Employee> emp = employeeRepository.findById(employeeId);
         Employee employee = modelMapper.map(emp, Employee.class);
+        if(employee != null) {
+            TimesheetTemplate template = modelMapper.map(request, TimesheetTemplate.class);
 
-        TimesheetTemplate template = modelMapper.map(request, TimesheetTemplate.class);
+            Employee employee1 = new Employee();
+            employee1.setId(employeeId);
+            template.setEmployee(employee1);
 
-        Employee employee1 = new Employee();
-        employee1.setId(employeeId);
-        template.setEmployee(employee1);
-
-        templateRepository.save(template);
-        return modelMapper.map(template, TimesheetTemplateDTO.class);
+            templateRepository.save(template);
+            return modelMapper.map(template, TimesheetTemplateDTO.class);
+        }
+        else{
+            return null;
+        }
     }
 
 
-    public List<TimesheetTemplateDTO> getTemplates() {
-        List<TimesheetTemplate> templates = templateRepository.findAll();
+    public List<TimesheetTemplateDTO> getTemplates(Long employeeId) {
+        Optional<Employee> emp = employeeRepository.findById(employeeId);
+        Employee employee = modelMapper.map(emp, Employee.class);
 
-        List<TimesheetTemplateDTO> templateDTOS = new ArrayList<>();
+        if(employee != null) {
+            List<TimesheetTemplate> templates = templateRepository.findAll();
+            List<TimesheetTemplateDTO> templateDTOS = new ArrayList<>();
 
-        for (TimesheetTemplate template: templates) {
-            templateDTOS.add(modelMapper.map(template, TimesheetTemplateDTO.class));
+            for (TimesheetTemplate template : templates) {
+                if(template.getEmployee().getId().equals(employeeId)) {
+                    templateDTOS.add(modelMapper.map(template, TimesheetTemplateDTO.class));
+                }
+            }
+
+            return templateDTOS;
         }
+        return null;
+    }
 
-        return templateDTOS;
+    public TimesheetTemplateDTO getTemplateByDay(Long employeeId, String day) {
+        Optional<Employee> emp = employeeRepository.findById(employeeId);
+        Employee employee = modelMapper.map(emp, Employee.class);
+        if(employee != null){
+            List<TimesheetTemplate> templates = templateRepository.findAll();
+            for(TimesheetTemplate template: templates){
+                if(template.getTemplateDay().equals(day)){
+                    return modelMapper.map(template, TimesheetTemplateDTO.class);
+                }
+            }
+        }
+        return null;
     }
 }
