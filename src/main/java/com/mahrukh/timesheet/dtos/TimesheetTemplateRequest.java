@@ -2,11 +2,10 @@ package com.mahrukh.timesheet.dtos;
 
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Data
-public class TimesheetTemplateDTO {
+public class TimesheetTemplateRequest {
     private String templateDay;
     private LocalTime checkIn;
     private LocalTime checkOut;

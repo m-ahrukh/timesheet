@@ -2,8 +2,12 @@ package com.mahrukh.timesheet.services;
 
 import com.mahrukh.timesheet.dtos.EmployeeDTO;
 import com.mahrukh.timesheet.dtos.EmployeeRequest;
+import com.mahrukh.timesheet.dtos.TimesheetTemplateDTO;
+import com.mahrukh.timesheet.dtos.TimesheetTemplateRequest;
 import com.mahrukh.timesheet.entities.Employee;
+import com.mahrukh.timesheet.entities.TimesheetTemplate;
 import com.mahrukh.timesheet.repositories.EmployeeRepository;
+import com.mahrukh.timesheet.repositories.TemplateRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -17,6 +21,7 @@ import java.util.Optional;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+    private final TemplateRepository templateRepository;
 
     private final ModelMapper modelMapper;
     public EmployeeDTO saveEmployee(EmployeeRequest request){
@@ -101,5 +106,32 @@ public class EmployeeService {
         else{
             return null;
         }
+    }
+
+    public TimesheetTemplateDTO saveTimesheetTemplate(TimesheetTemplateRequest request, Long employeeId) {
+        Optional<Employee> emp = employeeRepository.findById(employeeId);
+        Employee employee = modelMapper.map(emp, Employee.class);
+
+        TimesheetTemplate template = modelMapper.map(request, TimesheetTemplate.class);
+
+        Employee employee1 = new Employee();
+        employee1.setId(employeeId);
+        template.setEmployee(employee1);
+
+        templateRepository.save(template);
+        return modelMapper.map(template, TimesheetTemplateDTO.class);
+    }
+
+
+    public List<TimesheetTemplateDTO> getTemplates() {
+        List<TimesheetTemplate> templates = templateRepository.findAll();
+
+        List<TimesheetTemplateDTO> templateDTOS = new ArrayList<>();
+
+        for (TimesheetTemplate template: templates) {
+            templateDTOS.add(modelMapper.map(template, TimesheetTemplateDTO.class));
+        }
+
+        return templateDTOS;
     }
 }

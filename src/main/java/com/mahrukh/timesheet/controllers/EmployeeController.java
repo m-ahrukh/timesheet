@@ -2,6 +2,9 @@ package com.mahrukh.timesheet.controllers;
 
 import com.mahrukh.timesheet.dtos.EmployeeDTO;
 import com.mahrukh.timesheet.dtos.EmployeeRequest;
+import com.mahrukh.timesheet.dtos.TimesheetTemplateDTO;
+import com.mahrukh.timesheet.dtos.TimesheetTemplateRequest;
+import com.mahrukh.timesheet.entities.TimesheetTemplate;
 import com.mahrukh.timesheet.services.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -51,5 +54,13 @@ public class EmployeeController {
         return employeeService.updateEmployee(request, id);
     }
 
-    
+    @PostMapping("/{employeeId}/templates")
+    public TimesheetTemplateDTO saveTemplate(@RequestBody @Valid TimesheetTemplateRequest request, @PathVariable Long employeeId){
+        return employeeService.saveTimesheetTemplate(request, employeeId);
+    }
+
+    @GetMapping("/{employeeId}/templates")
+    public List<TimesheetTemplateDTO> getTemplates(){
+        return employeeService.getTemplates();
+    }
 }

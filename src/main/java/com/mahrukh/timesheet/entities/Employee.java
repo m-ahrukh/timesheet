@@ -1,18 +1,17 @@
 package com.mahrukh.timesheet.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @Entity
+@Table(name = "employee")
 public class Employee {
 
     @Id
@@ -22,6 +21,9 @@ public class Employee {
     private String lastName;
     private String username;
     private String password;
+
+    @OneToMany(mappedBy = "employee")
+    private List<TimesheetTemplate> templates;
 
     @CreationTimestamp(source = SourceType.DB)
     private Instant createdOn;
