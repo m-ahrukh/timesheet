@@ -46,20 +46,11 @@ public class EmployeeService {
         return employeeDTOS;
     }
 
-    public EmployeeDTO getEmployeeByUsername(String username) {
-        List<Employee> employees = employeeRepository.findAll();
-
-        for (Employee employee : employees) {
-            if (employee.getUsername().equals(username)) {
-                return modelMapper.map(employee, EmployeeDTO.class);
-            }
-        }
-        return null;
-    }
 
     public EmployeeDTO getEmployeeById(Long id) {
-        Optional<Employee> employee = employeeRepository.findById(id);
-        return modelMapper.map(employee, EmployeeDTO.class);
+        return employeeRepository.findById(id)
+                .map(employee -> modelMapper.map(employee, EmployeeDTO.class))
+                .orElseThrow(() -> new EmployeeNotFound("employee not found with id: "+id));
     }
 
     public EmployeeDTO deleteEmployee(String username) {

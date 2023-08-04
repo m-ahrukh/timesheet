@@ -1,17 +1,20 @@
 package com.mahrukh.timesheet.controllers;
 
-import com.mahrukh.timesheet.dtos.EmployeeDTO;
-import com.mahrukh.timesheet.dtos.EmployeeRequest;
-import com.mahrukh.timesheet.dtos.TimesheetTemplateDTO;
-import com.mahrukh.timesheet.dtos.TimesheetTemplateRequest;
+import com.mahrukh.timesheet.dtos.*;
 import com.mahrukh.timesheet.entities.TimesheetTemplate;
+import com.mahrukh.timesheet.exceptions.EmployeeNotFound;
 import com.mahrukh.timesheet.services.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("employees")
 @AllArgsConstructor
@@ -29,12 +32,8 @@ public class EmployeeController {
         return employeeService.getAllEmployees();
     }
 
-    @GetMapping("/{username}")
-    public EmployeeDTO getEmployeeByUsername(@PathVariable @Valid String username){
-        return employeeService.getEmployeeByUsername(username);
-    }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/{id}")
     public EmployeeDTO getEmployeeById(@PathVariable @Valid Long id){
         return employeeService.getEmployeeById(id);
     }
@@ -44,12 +43,12 @@ public class EmployeeController {
         return employeeService.deleteEmployee(username);
     }
 
-    @DeleteMapping("/id/{id}")
+    @DeleteMapping("/{id}")
     public EmployeeDTO deleteEmployeeById(@PathVariable @Valid Long id){
         return employeeService.deleteEmployeeById(id);
     }
 
-    @PatchMapping("/id/{id}")
+    @PatchMapping("/{id}")
     public EmployeeRequest updateEmployee(@RequestBody EmployeeRequest request, @PathVariable Long id){
         return employeeService.updateEmployee(request, id);
     }
@@ -73,4 +72,24 @@ public class EmployeeController {
     public TimesheetTemplateRequest updateTemplate(@RequestBody TimesheetTemplateRequest request, @PathVariable Long employeeId, @PathVariable Long templateId){
         return employeeService.updateTemplate(request, employeeId, templateId);
     }
+
+
+    @ExceptionHandler(EmployeeNotFound.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ErrorResponse> handleItemNotFoundException(EmployeeNotFound exception,
+            WebRequest request
+    ){
+        log.error("Failed to find the requested element", exception);
+        return buildErrorResponse(exception, HttpStatus.NOT_FOUND);
+    }
+
+    private ResponseEntity<ErrorResponse> buildErrorResponse(Exception exception, HttpStatus httpStatus) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                httpStatus.value(),
+                exception.getMessage()
+        );
+
+        return ResponseEntity.status(httpStatus).body(errorResponse);
+    }
+
 }
