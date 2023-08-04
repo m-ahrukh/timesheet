@@ -68,4 +68,9 @@ public class EmployeeController {
     public TimesheetTemplateDTO getTemplateByDay(@PathVariable Long employeeId, @PathVariable String templateDay){
         return employeeService.getTemplateByDay(employeeId, templateDay);
     }
+
+    @PatchMapping("/{employeeId}/templates/{templateId}")
+    public TimesheetTemplateRequest updateTemplate(@RequestBody TimesheetTemplateRequest request, @PathVariable Long employeeId, @PathVariable Long templateId){
+        return employeeService.updateTemplate(request, employeeId, templateId);
+    }
 }
