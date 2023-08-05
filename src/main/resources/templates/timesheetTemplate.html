@@ -1,0 +1,15 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Timesheet Template</title>
+</head>
+<body>
+<h1>Hello, <span th:text="${name}"></span></h1>
+
+<select name="timeSheetDay">
+    <option th:each="day : ${days}" th:value="${day}" th:text="${day}"></option>
+</select>
+
+</body>
+</html>
