@@ -5,7 +5,16 @@
     <title>Timesheet Template</title>
 </head>
 <body>
-<h1>Hello, <span th:text="${name}"></span></h1>
+
+<select>
+    <option value="en">English</option>
+    <option value="de">German</option>
+</select>
+
+<h1> <span th:text="#{message.welcome}">  </span> <span th:text="${name}"></span></h1>
+
+
+<div th:text="#{label.days}"></div>
 
 <select name="timeSheetDay">
     <option th:each="day : ${days}" th:value="${day}" th:text="${day}"></option>
