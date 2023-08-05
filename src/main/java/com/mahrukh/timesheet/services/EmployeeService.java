@@ -10,8 +10,8 @@ import com.mahrukh.timesheet.exceptions.EmployeeNotFound;
 import com.mahrukh.timesheet.exceptions.TemplateNotFound;
 import com.mahrukh.timesheet.repositories.EmployeeRepository;
 import com.mahrukh.timesheet.repositories.TemplateRepository;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +21,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
@@ -28,7 +29,10 @@ public class EmployeeService {
 
     private final ModelMapper modelMapper;
 
+
     public EmployeeDTO saveEmployee(EmployeeRequest request) {
+
+        log.info("saving user with username: {}", request.getUsername());
 
         Employee employee = modelMapper.map(request, Employee.class);
         employeeRepository.save(employee);
@@ -50,56 +54,47 @@ public class EmployeeService {
     public EmployeeDTO getEmployeeById(Long id) {
         return employeeRepository.findById(id)
                 .map(employee -> modelMapper.map(employee, EmployeeDTO.class))
-                .orElseThrow(() -> new EmployeeNotFound("employee not found with id: "+id));
-    }
-
-    public EmployeeDTO deleteEmployee(String username) {
-        List<Employee> employees = employeeRepository.findAll();
-
-        for (Employee emp : employees) {
-            Employee employee = modelMapper.map(emp, Employee.class);
-            if (emp.getUsername().equals(username)) {
-                employees.remove(Math.toIntExact(employee.getId() - 1));
-                return modelMapper.map(emp, EmployeeDTO.class);
-            }
-        }
-        return null;
+                .orElseThrow(() -> new EmployeeNotFound("employee not found with id: " + id));
     }
 
     public EmployeeDTO deleteEmployeeById(Long id) {
-        List<Employee> employees = employeeRepository.findAll();
-        Optional<Employee> emp = employeeRepository.findById(id);
-        Employee employee = modelMapper.map(emp, Employee.class);
-        employees.remove(Math.toIntExact(employee.getId() - 1));
+        Employee employee1 = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFound("employee not found with id: " + id));
 
-        for (Employee employee1 : employees) {
-            return modelMapper.map(employee1, EmployeeDTO.class);
-        }
-        return null;
+        employeeRepository.delete(employee1);
+
+        return modelMapper.map(employee1, EmployeeDTO.class);
+
     }
 
-    public EmployeeRequest updateEmployee(EmployeeRequest request, Long id) {
-        Optional<Employee> emp = employeeRepository.findById(id);
-        Employee employee = modelMapper.map(emp, Employee.class);
+    public EmployeeRequest updateEmployee(EmployeeRequest request, Long userId) {
 
-        if (employee != null) {
-            if (request.getFirstName() != null) {
-                employee.setFirstName(request.getFirstName());
-            }
-            if (request.getLastName() != null) {
-                employee.setLastName(request.getLastName());
-            }
-            if (request.getPassword() != null) {
-                employee.setPassword(request.getPassword());
-            }
-            if (request.getUsername() != null) {
-                employee.setUsername(request.getUsername());
-            }
-            employeeRepository.saveAndFlush(employee);
-            return modelMapper.map(employee, EmployeeRequest.class);
-        } else {
-            return null;
+        log.info("updating user with userId : {}", userId);
+
+        Optional<Employee> optionalEmployee = employeeRepository.findById(userId);
+        if (!optionalEmployee.isPresent()) {
+            throw new EmployeeNotFound("employee not found with userId " + userId);
         }
+
+        Employee employee = optionalEmployee.get();
+
+        if (request.getFirstName() != null) {
+            employee.setFirstName(request.getFirstName());
+        }
+        if (request.getLastName() != null) {
+            employee.setLastName(request.getLastName());
+        }
+        if (request.getPassword() != null) {
+            employee.setPassword(request.getPassword());
+        }
+        if (request.getUsername() != null) {
+            employee.setUsername(request.getUsername());
+        }
+        employeeRepository.saveAndFlush(employee);
+
+        log.info("updated user with id: {}", userId);
+
+        return modelMapper.map(employee, EmployeeRequest.class);
     }
 
     public TimesheetTemplateDTO saveTimesheetTemplate(TimesheetTemplateRequest request, Long employeeId) {
@@ -198,4 +193,6 @@ public class EmployeeService {
         templateRepository.saveAndFlush(timesheetTemplate);
         return modelMapper.map(timesheetTemplate, TimesheetTemplateRequest.class);
     }
+
+
 }
