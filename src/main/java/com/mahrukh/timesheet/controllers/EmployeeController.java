@@ -38,10 +38,10 @@ public class EmployeeController {
         return employeeService.getEmployeeById(id);
     }
 
-    @DeleteMapping("/{username}")
-    public EmployeeDTO deleteEmployee(@PathVariable @Valid String username){
-        return employeeService.deleteEmployee(username);
-    }
+//    @DeleteMapping("/{username}")
+//    public EmployeeDTO deleteEmployee(@PathVariable @Valid String username){
+//        return employeeService.deleteEmployee(username);
+//    }
 
     @DeleteMapping("/{id}")
     public EmployeeDTO deleteEmployeeById(@PathVariable @Valid Long id){
@@ -79,7 +79,7 @@ public class EmployeeController {
     public ResponseEntity<ErrorResponse> handleItemNotFoundException(EmployeeNotFound exception,
             WebRequest request
     ){
-        log.error("Failed to find the requested element", exception);
+        log.info("Failed to find the requested element", exception);
         return buildErrorResponse(exception, HttpStatus.NOT_FOUND);
     }
 
@@ -91,5 +91,15 @@ public class EmployeeController {
 
         return ResponseEntity.status(httpStatus).body(errorResponse);
     }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ErrorResponse> handleInternalException(EmployeeNotFound exception,
+                                                                     WebRequest request
+    ){
+        log.error("Failed to find the requested element", exception);
+        return buildErrorResponse(exception, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 
 }
