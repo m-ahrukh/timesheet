@@ -12,10 +12,10 @@ public class TimesheetTemplateController {
     @GetMapping("/templates")
     public String getTimesheetTemplate(Model model) {
 
-        List<String> days = List.of("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
+//        List<String> days = List.of("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
+//        model.addAttribute("name", "Aamir Latif");
+//        model.addAttribute("days", days);
 
-        model.addAttribute("name", "Aamir Latif");
-        model.addAttribute("days", days);
         return "timesheetTemplate";
     }
 }
