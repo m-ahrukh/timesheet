@@ -1,7 +1,6 @@
 package com.mahrukh.timesheet.controllers;
 
 import com.mahrukh.timesheet.dtos.*;
-import com.mahrukh.timesheet.entities.TimesheetTemplate;
 import com.mahrukh.timesheet.exceptions.EmployeeNotFound;
 import com.mahrukh.timesheet.services.EmployeeService;
 import jakarta.validation.Valid;
@@ -18,7 +17,8 @@ import java.util.List;
 @RestController
 @RequestMapping("employees")
 @AllArgsConstructor
-public class EmployeeController {
+@CrossOrigin(origins = "http://localhost:3000")
+public class EmployeeRestController {
 
     private final EmployeeService employeeService;
 
