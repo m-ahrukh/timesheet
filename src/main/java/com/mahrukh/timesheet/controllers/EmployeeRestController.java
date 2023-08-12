@@ -63,16 +63,24 @@ public class EmployeeRestController {
         return employeeService.getTemplates(employeeId);
     }
 
-    @GetMapping("/{employeeId}/templates/{templateDay}")
-    public TimesheetTemplateDTO getTemplateByDay(@PathVariable Long employeeId, @PathVariable String templateDay){
-        return employeeService.getTemplateByDay(employeeId, templateDay);
+    @GetMapping("/{employeeId}/templates/{templateId}")
+    public TimesheetTemplateDTO getTemplateById(@PathVariable Long employeeId, @PathVariable Long templateId){
+
+        return employeeService.getTemplateById(employeeId, templateId);
     }
 
     @PatchMapping("/{employeeId}/templates/{templateId}")
     public TimesheetTemplateRequest updateTemplate(@RequestBody TimesheetTemplateRequest request, @PathVariable Long employeeId, @PathVariable Long templateId){
+        System.out.println("employeeId " + employeeId);
+        System.out.println("templated " + templateId);
+        System.out.println("template "+ request);
         return employeeService.updateTemplate(request, employeeId, templateId);
     }
 
+    @DeleteMapping("/{employeeId}/templates/{templateId}")
+    public TimesheetTemplateDTO deleteEmployeeById(@PathVariable @Valid Long employeeId, @PathVariable @Valid Long templateId ){
+        return employeeService.deleteTemplateById(employeeId, templateId);
+    }
 
     @ExceptionHandler(EmployeeNotFound.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -100,6 +108,4 @@ public class EmployeeRestController {
         log.error("Failed to find the requested element", exception);
         return buildErrorResponse(exception, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-
 }

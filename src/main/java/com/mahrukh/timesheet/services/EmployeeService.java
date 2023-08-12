@@ -10,8 +10,10 @@ import com.mahrukh.timesheet.exceptions.EmployeeNotFound;
 import com.mahrukh.timesheet.exceptions.TemplateNotFound;
 import com.mahrukh.timesheet.repositories.EmployeeRepository;
 import com.mahrukh.timesheet.repositories.TemplateRepository;
+import com.sun.tools.jconsole.JConsoleContext;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.sql.Template;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -138,7 +140,7 @@ public class EmployeeService {
         return templateDTOS;
     }
 
-    public TimesheetTemplateDTO getTemplateByDay(Long employeeId, String day) {
+    public TimesheetTemplateDTO getTemplateById(Long employeeId, Long templateId) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
         if (!optionalEmployee.isPresent()) {
             throw new EmployeeNotFound("employee not found with id " + employeeId);
@@ -148,7 +150,7 @@ public class EmployeeService {
 
         List<TimesheetTemplate> templates = templateRepository.findAll();
         for (TimesheetTemplate template : templates) {
-            if (template.getTemplateDay().equals(day)) {
+            if (template.getId().equals(templateId)) {
                 return modelMapper.map(template, TimesheetTemplateDTO.class);
             }
         }
@@ -158,6 +160,8 @@ public class EmployeeService {
     public TimesheetTemplateRequest updateTemplate(TimesheetTemplateRequest request, Long employeeId, Long
             templateId) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
+
+        System.out.println("op emp "+ optionalEmployee);
         if (!optionalEmployee.isPresent()) {
             throw new EmployeeNotFound("employee not found with id " + employeeId);
         }
@@ -167,6 +171,7 @@ public class EmployeeService {
         System.out.println("employee " + employee);
 
         Optional<TimesheetTemplate> template = templateRepository.findById(templateId);
+
         if (!template.isPresent()) {
             throw new TemplateNotFound("template not found with id " + templateId);
         }
@@ -195,4 +200,12 @@ public class EmployeeService {
     }
 
 
+    public TimesheetTemplateDTO deleteTemplateById(Long employeeId, Long templateId) {
+        Optional<TimesheetTemplate> template = templateRepository.findById(templateId);
+        if (!template.isPresent()) {
+            throw new TemplateNotFound("template not found with id " + templateId);
+        }
+        templateRepository.deleteById(templateId);
+        return modelMapper.map(template, TimesheetTemplateDTO.class);
+    }
 }
